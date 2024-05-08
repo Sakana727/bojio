@@ -37,3 +37,30 @@ export async function createPost(
 
   
 }
+
+export async function fetchPosts(pageNumber = 1, pageSize = 20) {
+    connectToDatabase()
+
+    const skipAmount = (pageNumber -1) * pageSize
+
+    const postsQuery = Post.find({ parentId: { $in: [null, undefined]}})
+    .sort({ createdAt: 'desc'})
+    .skip(skipAmount)
+    .limit(pageSize)
+    .populate({ path: 'author', model: User})
+    .populate({ 
+        path: 'children', 
+        populate: 'author', 
+        model: User,
+        select: "_id name parent_id image"})
+    
+
+    const totalPostsCount = await Post.countDocuments({ parentId: { $in: [null, undefined]}})
+
+    const posts = await postsQuery.exec()
+
+    const isNext = totalPostsCount > skipAmount + posts.length
+
+    return { posts, isNext}
+
+}

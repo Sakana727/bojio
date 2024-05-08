@@ -82,10 +82,21 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
     const blob = values.profile_photo;
     const hasImageChanged = isBase64Image(blob);
 
+    // if (hasImageChanged) {
+    //   const imgRes = await startUpload(files);
+    //   if (imgRes && imgRes[0].fileUrl) {
+    //     values.profile_photo = imgRes[0].fileUrl;
+    //   }
+    // }
+
     if (hasImageChanged) {
       const imgRes = await startUpload(files);
-      if (imgRes && imgRes[0].fileUrl) {
-        values.profile_photo = imgRes[0].fileUrl;
+      if (imgRes && Array.isArray(imgRes) && imgRes.length > 0) {
+        // Assuming `imgRes[0]` contains the URL of the uploaded file
+        const fileUrl = imgRes[0].url; // Adjust this line based on the actual structure
+        if (fileUrl) {
+          values.profile_photo = fileUrl;
+        }
       }
     }
 

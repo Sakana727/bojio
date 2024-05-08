@@ -144,6 +144,7 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
                   onChange={(e) => handleImage(e, field.onChange)}
                 />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -198,7 +199,7 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
               </FormLabel>
               <FormControl>
                 <Textarea
-                  rows={8}
+                  rows={3}
                   className="account-form_input no-focus"
                   {...field}
                 />

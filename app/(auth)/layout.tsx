@@ -18,7 +18,16 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className={"${inter.className} bg-dark-1"}>{children}</body>
+        <body className="bg-dark-1 flex flex-col xl:flex-row items-center">
+          <div className="xl:w-1/2 flex justify-center overflow-hidden items-center py-20">
+            {children}
+          </div>
+          <img
+            src="/assets/side-img.svg"
+            alt="logo"
+            className="hidden xl:block xl:w-1/2 h-screen object-cover bg-no-repeat"
+          />
+        </body>
       </html>
     </ClerkProvider>
   );

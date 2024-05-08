@@ -1,6 +1,5 @@
 "use server"
 
-
 import { revalidatePath } from "next/cache";
 import User from "../models/user.model";
 import { connectToDatabase } from "../mongoose"
@@ -45,3 +44,17 @@ export async function updateUser({
     console.error(error.message);
     }
   }
+
+export async function fetchUser(userId: string){
+  try{
+    connectToDatabase();
+    return await User.findOne({ id: userId})
+    // .populate({path: 'communitites',
+    //   model: Community
+    // });
+  }
+  catch (error: any){
+    throw new Error(`Failed to fetch user: ${error.message}`);
+  }
+
+}

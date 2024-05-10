@@ -3,6 +3,8 @@ import { revalidatePath } from "next/cache";
 import Post from "../models/post.model";
 import User from "../models/user.model";
 import { connectToDatabase } from "../mongoose";
+import path from "path";
+import { model } from "mongoose";
 
 interface Params {
     text: string,
@@ -63,4 +65,71 @@ export async function fetchPosts(pageNumber = 1, pageSize = 20) {
 
     return { posts, isNext}
 
+}
+
+export async function fetchPostById(id: string){
+    connectToDatabase()
+
+    try {
+        const post = await Post.findById(id)
+        .populate({ path: 'author', model: User, select: "_id id name image"})
+        .populate({ 
+            path: 'children', 
+            populate: [
+                {
+                    path: 'author',
+                    model: User,
+                    select: "_id id name parentId image",
+                },
+                {
+                    path: 'children',
+                    model: Post,
+                    populate: {
+                        path: 'author',
+                        model: User,
+                        select: "_id id name parentId image"
+                    }
+    
+                }
+            ],
+        }).exec();
+
+        return post
+    } catch (error: any) {
+        throw new Error (`Error fetching post: ${error.message}`)
+    }
+}
+
+export async function addCommentToPost( 
+    postId: string, 
+    commentText: string,
+    userId: string,
+    path: string,
+){
+    connectToDatabase()
+
+    try {
+        const origianlPost = await Post.findById(postId)
+
+        if(!origianlPost){
+            throw new Error("Post not found")
+        }
+        
+        const commentPost = new Post({
+            text: commentText,
+            author: userId,
+            parentId: postId,
+        })
+
+        const savedCommentPost = await commentPost.save()
+
+        origianlPost.children.push(savedCommentPost._id)
+
+        await origianlPost.save()
+
+        revalidatePath(path)
+
+    } catch (error: any) {
+        throw new Error (`Error adding comment to post: ${error.message}`)
+    }
 }

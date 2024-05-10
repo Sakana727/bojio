@@ -6,5 +6,5 @@ export const PostValidation = z.object({
   });
   
   export const CommentValidation = z.object({
-    posts: z.string().min(1).min(3, { message: "Minimum 3 characters." }),
+    post: z.string().min(1).min(3, { message: "Minimum 3 characters." }),
   });

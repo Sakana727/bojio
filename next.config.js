@@ -9,6 +9,7 @@ const nextConfig = {
       "images.clerk.dev",
       "uploadthing.com",
       "placehold.co",
+      "utfs.io", // Added utfs.io to the list of allowed domains
     ],
   },
 };

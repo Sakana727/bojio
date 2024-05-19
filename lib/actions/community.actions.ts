@@ -15,7 +15,7 @@ export async function createCommunity(
   username: string,
   image: string,
   bio: string,
-  createdById: string 
+  createdById: string
 ) {
   try {
     connectToDatabase();
@@ -23,7 +23,7 @@ export async function createCommunity(
     const user = await User.findOne({ id: createdById });
 
     if (!user) {
-      throw new Error("User not found"); 
+      throw new Error("User not found");
     }
 
     const newCommunity = new Community({
@@ -78,7 +78,7 @@ export async function fetchCommunityPosts(id: string) {
         {
           path: "author",
           model: User,
-          select: "name image id", 
+          select: "name image id",
         },
         {
           path: "children",

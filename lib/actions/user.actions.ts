@@ -139,9 +139,9 @@ export async function fetchUsers({
 
     const totalUsersCount = await User.countDocuments(query)
     const users = await usersQuery.exec()
-    const inNext = totalUsersCount > skipAmount + users.length;
+    const isNext = totalUsersCount > skipAmount + users.length;
 
-    return { users, inNext };
+    return { users, isNext };
 
   } catch (error: any) {
     throw new Error(`Failed to fetch users: ${error.message}`);

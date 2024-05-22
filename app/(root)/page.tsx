@@ -10,6 +10,7 @@ import {
 import { currentUser } from "@clerk/nextjs/server";
 import { fetchUser } from "@/lib/actions/user.actions";
 import { redirect } from "next/navigation";
+import Pagination from "@/components/shared/Pagination";
 
 function Header() {
   return (
@@ -27,8 +28,15 @@ function Header() {
   );
 }
 
-export default async function Home() {
-  const result = await fetchPosts(1, 30);
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | undefined };
+}) {
+  const result = await fetchPosts(
+    searchParams.page ? +searchParams.page : 1,
+    15
+  );
   const user = await currentUser();
 
   if (!user) return null;
@@ -49,7 +57,7 @@ export default async function Home() {
               <PostCard
                 key={post._id}
                 id={post._id}
-                currentUserId={user?.id || ""}
+                currentUserId={user.id}
                 parentId={post.parentId}
                 content={post.text}
                 author={post.author}
@@ -61,6 +69,11 @@ export default async function Home() {
           </>
         )}
       </section>
+      <Pagination
+        path="/"
+        pageNumber={searchParams?.page ? +searchParams.page : 1}
+        isNext={result.isNext}
+      />
     </>
   );
 }

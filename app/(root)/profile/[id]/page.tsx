@@ -6,6 +6,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { profileTabs } from "@/constants";
 import Image from "next/image";
 import PostsTab from "@/components/shared/PostsTab";
+import RepliesTab from "@/components/shared/RepliesTab";
+import CommunitiesTab from "@/components/shared/CommunitiesTab";
 
 async function Page({ params }: { params: { id: string } }) {
   const user = await currentUser();
@@ -54,11 +56,16 @@ async function Page({ params }: { params: { id: string } }) {
               value={tab.value}
               className=" w-full text-light-1"
             >
-              <PostsTab
-                currentUserId={user.id}
-                accountId={userInfo.id}
-                accountType="User"
-              />
+              {tab.value === "posts" && (
+                <PostsTab
+                  currentUserId={user.id}
+                  accountId={userInfo.id}
+                  accountType="User"
+                />
+              )}
+
+              {tab.value === "replies" && <RepliesTab />}
+              {tab.value === "communitites" && <CommunitiesTab />}
             </TabsContent>
           ))}
         </Tabs>

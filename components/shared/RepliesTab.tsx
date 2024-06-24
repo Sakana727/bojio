@@ -9,27 +9,34 @@ const RepliesTab = async () => {
   if (!user) return null;
 
   const userInfo = await fetchUser(user.id);
-  if (!userInfo?.onboarded) redirect("/onboarding");
+  if (!userInfo?.onboarded) {
+    redirect("/onboarding");
+    return null; // Ensure to return null after redirect
+  }
 
   const activity = await getActivity(userInfo._id);
+
   return (
     <div>
-      <section className=" mt-10 flex flex-col gap-5">
+      <section className="mt-10 flex flex-col gap-5">
         {activity.length > 0 ? (
           <>
-            {activity.map((activity) => (
-              <Link key={activity._id} href={`/post/${activity.parentId}`}>
-                <article className=" activity-card">
+            {activity.map((activity: any) => (
+              <Link
+                key={String(activity._id)}
+                href={`/post/${activity.parentId}`}
+              >
+                <article className="activity-card">
                   <Image
-                    src={activity.author.image}
-                    alt=" Profile Picture"
+                    src={activity.author?.image} // Replace with default image source
+                    alt="Profile Picture"
                     width={20}
                     height={20}
-                    className=" rounded-full object-cover"
+                    className="rounded-full object-cover"
                   />
-                  <p className=" !text-small-regular text-light-1">
-                    <span className=" mr-1 text-primary-500 text-small-semibold">
-                      {activity.author.name}
+                  <p className="text-small-regular text-light-1">
+                    <span className="mr-1 text-primary-500 text-small-semibold">
+                      {activity.author?.name}
                     </span>{" "}
                     replied to your Post
                   </p>
@@ -38,10 +45,11 @@ const RepliesTab = async () => {
             ))}
           </>
         ) : (
-          <p className=" !text-base-regular text-light-3"> No activity</p>
+          <p className="text-base-regular text-light-3">No activity</p>
         )}
       </section>
     </div>
   );
 };
+
 export default RepliesTab;

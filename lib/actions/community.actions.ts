@@ -6,6 +6,7 @@ import { FilterQuery, SortOrder } from "mongoose";
 import Community from "../models/community.model";
 import Post from "../models/post.model";
 import User from "../models/user.model";
+import Event from "../models/event.model";
 
 import { connectToDatabase } from "../mongoose";
 
@@ -268,6 +269,27 @@ export async function deleteCommunity(communityId: string) {
     return deletedCommunity;
   } catch (error) {
     console.error("Error deleting community: ", error);
+    throw error;
+  }
+}
+
+export async function fetchCommunityEvents(id: string) {
+  try {
+    await connectToDatabase();
+
+    const communityEvents = await Community.findById(id).populate({
+      path: "events",
+      model: Event,
+      populate: {
+        path: "author",
+        model: User,
+        select: "name image id",
+      },
+    });
+
+    return communityEvents;
+  } catch (error) {
+    console.error("Error fetching community events:", error);
     throw error;
   }
 }

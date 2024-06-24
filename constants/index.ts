@@ -29,6 +29,7 @@ export const sidebarLinks = [
     route: "/profile",
     label: "Profile",
   },
+
 ];
 
 export const profileTabs = [

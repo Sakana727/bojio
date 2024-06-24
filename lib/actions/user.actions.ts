@@ -6,7 +6,7 @@ import { connectToDatabase } from "../mongoose"
 import Post from "../models/post.model";
 import { FilterQuery, model, SortOrder } from "mongoose";
 import Community from "../models/community.model";
-
+import Event from "../models/event.model";
 interface Params {
   userId: string,
   username: string,
@@ -166,10 +166,65 @@ export async function getActivity(userId: string) {
       model: User,
       select: 'name image _id'
     })
+      .lean(); // Convert to plain JavaScript objects
 
-    return replies;
+    return replies.map((reply) => ({
+      ...reply,
+      type: "comment",
+    }));
 
   } catch (error: any) {
     throw new Error(`Failed to fetch activity: ${error.message}`);
+  }
+}
+
+export async function fetchUserEvents(userId: string) {
+  try {
+    await connectToDatabase();
+
+    const userEvents = await User.findOne({ id: userId }).populate({
+      path: "events",
+      model: Event,
+      populate: {
+        path: "community",
+        model: Community,
+        select: "name id image",
+      },
+    });
+
+    return userEvents;
+  } catch (error) {
+    console.error("Error fetching user events:", error);
+    throw error;
+  }
+}
+
+export async function getEventActivity(userId: string) {
+  try {
+    await connectToDatabase(); // Ensure you have a correct connection to MongoDB
+
+    const userEvents = await Event.find({ author: userId });
+
+    const childEventIds = userEvents.reduce((acc, userEvent) => {
+      return acc.concat(userEvent.children);
+    }, []);
+
+    const replies = await Event.find({
+      _id: { $in: childEventIds },
+      author: { $ne: userId },
+    }).populate({
+      path: 'author',
+      model: User,
+      select: 'name image _id',
+    });
+
+    const activityWithTypes = replies.map((reply) => ({
+      ...reply.toObject(),
+      type: 'event',
+    }));
+
+    return activityWithTypes;
+  } catch (error: any) {
+    throw new Error(`Failed to fetch event activity: ${error.message}`);
   }
 }

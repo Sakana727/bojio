@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { fetchCommunityDetails } from "@/lib/actions/community.actions";
 import { currentUser } from "@clerk/nextjs/server";
+import EventsTab from "@/components/shared/EventsTab";
 
 async function Page({ params }: { params: { id: string } }) {
   const user = await currentUser();
@@ -54,6 +55,15 @@ async function Page({ params }: { params: { id: string } }) {
           <TabsContent value="posts" className="w-full text-light-1">
             {/* @ts-ignore */}
             <PostsTab
+              currentUserId={user.id}
+              accountId={communityDetails._id}
+              accountType="Community"
+            />
+          </TabsContent>
+
+          <TabsContent value="events" className="w-full text-light-1">
+            {/* @ts-ignore */}
+            <EventsTab
               currentUserId={user.id}
               accountId={communityDetails._id}
               accountType="Community"

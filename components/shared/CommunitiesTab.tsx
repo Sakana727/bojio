@@ -17,20 +17,26 @@ async function CommunitiesTab() {
   return (
     <>
       <section className="mt-12 flex flex-wrap gap-4 justify-center">
-        {result.communities.length === 0 ? (
+        {result.communities.filter((community) =>
+          community.members.some((member: any) => member.id === user.id)
+        ).length === 0 ? (
           <p className="no-result">No Result</p>
         ) : (
-          result.communities.map((community) => (
-            <CommunityCard
-              key={community.id}
-              id={community.id}
-              name={community.name}
-              username={community.username}
-              imgUrl={community.image}
-              bio={community.bio}
-              members={community.members}
-            />
-          ))
+          result.communities
+            .filter((community) =>
+              community.members.some((member: any) => member.id === user.id)
+            )
+            .map((community) => (
+              <CommunityCard
+                key={community.id}
+                id={community.id}
+                name={community.name}
+                username={community.username}
+                imgUrl={community.image}
+                bio={community.bio}
+                members={community.members}
+              />
+            ))
         )}
       </section>
 

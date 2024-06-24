@@ -32,6 +32,12 @@ const communitySchema = new mongoose.Schema({
       ref: "User",
     },
   ],
+  events: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Event',
+    },
+  ],
 });
 
 const Community =

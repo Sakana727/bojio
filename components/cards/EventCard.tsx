@@ -94,7 +94,7 @@ const EventCard = ({
                   </div>
                 </p>
               )}
-              {!isComment && (
+              {!isComment && !parentId && (
                 <div>
                   <p className="mt-2 text-small-regular text-light-2">
                     {description}
@@ -135,7 +135,7 @@ const EventCard = ({
                   className="cursor-pointer object-contain"
                 />
                 {!isComment && (
-                  <Link href={`/event/${id}`}>
+                  <Link href={`/poll/${id}`}>
                     <Image
                       src="/assets/poll.svg"
                       alt="poll"

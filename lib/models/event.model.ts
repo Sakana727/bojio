@@ -39,6 +39,10 @@ const eventSchema = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: "Event",
         },
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Poll'
+        },
     ],
 });
 

@@ -27,8 +27,6 @@ const page = async () => {
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );
 
-  console.log("Combined Activity:", combinedActivity); // Debug logging
-
   return (
     <section>
       <header

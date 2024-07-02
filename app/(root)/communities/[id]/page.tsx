@@ -62,12 +62,19 @@ async function Page({ params }: { params: { id: string } }) {
           </TabsContent>
 
           <TabsContent value="events" className="w-full text-light-1">
-            {/* @ts-ignore */}
-            <EventsTab
-              currentUserId={user.id}
-              accountId={communityDetails._id}
-              accountType="Community"
-            />
+            {communityDetails.members.some(
+              (member: any) => member.id === user.id
+            ) ? (
+              <EventsTab
+                currentUserId={user.id}
+                accountId={communityDetails._id}
+                accountType="Community"
+              />
+            ) : (
+              <p className=" text-white">
+                Please join the communtity to view events
+              </p>
+            )}
           </TabsContent>
 
           <TabsContent value="members" className="mt-9 w-full text-light-1">
@@ -85,14 +92,13 @@ async function Page({ params }: { params: { id: string } }) {
             </section>
           </TabsContent>
 
-          <TabsContent value="requests" className="w-full text-light-1">
-            {/* @ts-ignore */}
+          {/* <TabsContent value="requests" className="w-full text-light-1">
             <PostsTab
               currentUserId={user.id}
               accountId={communityDetails._id}
               accountType="Community"
             />
-          </TabsContent>
+          </TabsContent> */}
         </Tabs>
       </div>
     </section>

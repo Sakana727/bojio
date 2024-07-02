@@ -1,10 +1,14 @@
+// Page component where ResultCard and Poll are used
 import EventCard from "@/components/cards/EventCard";
-import Comment from "@/components/forms/Comment";
+
 import EventComment from "@/components/forms/EventComment";
 import { fetchEventById } from "@/lib/actions/event.actions";
 import { fetchUser } from "@/lib/actions/user.actions";
 import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import Poll from "@/components/forms/Poll";
+import { getPollIdByEventId, hasUserVoted } from "@/lib/actions/poll.actions";
+import PollCard from "@/components/cards/PollCard";
 
 const Page = async ({ params }: { params: { id: string } }) => {
   if (!params.id) return null;
@@ -17,6 +21,10 @@ const Page = async ({ params }: { params: { id: string } }) => {
 
   const event = await fetchEventById(params.id);
   if (!event) return null;
+
+  const pollId = await getPollIdByEventId(params.id);
+
+  const voted = await hasUserVoted(pollId, userInfo._id);
 
   return (
     <section className="relative">
@@ -37,14 +45,32 @@ const Page = async ({ params }: { params: { id: string } }) => {
           comments={event.children}
         />
       </div>
-      <div className="mt-7">
+      <div className="">
+        {pollId ? (
+          voted ? (
+            <div className="mt-7 text-white flex-row">
+              <PollCard pollId={pollId} />
+            </div>
+          ) : (
+            <div className="mt-7 text-white flex-row">
+              <Poll
+                eventId={event._id}
+                pollId={pollId}
+                currentUserId={userInfo._id}
+              />
+            </div>
+          )
+        ) : (
+          <p></p>
+        )}
+      </div>
+      <div className="mt-5">
         <EventComment
           eventId={event._id}
           currentUserImg={userInfo.image}
           currentUserId={JSON.stringify(userInfo._id)}
         />
       </div>
-
       <div className="mt-10">
         {event.children.map((childItem: any) => (
           <EventCard

@@ -8,6 +8,7 @@ import Event from "../models/event.model";
 
 import { connectToDatabase } from "../mongoose";
 import mongoose from "mongoose";
+import Poll from "../models/poll.model";
 
 interface Params {
     title: string;
@@ -93,11 +94,16 @@ export async function fetchEventById(eventId: string) {
     const event = await Event.findById(eventId)
         .populate({
             path: 'children',
-            populate: {
+            populate: [{
                 path: 'author',
                 model: 'User',
                 select: 'id name image', // Select the fields you need from the user
             },
+                // {
+                //     path: 'poll', // Assuming there's a poll field in the children that references the Poll model
+                //     model: Poll,
+                // }
+            ],
         })
         .populate('author', 'id name image') // Populate the main event author as well
         .populate({ path: 'community', select: "_id name image" })
@@ -167,14 +173,7 @@ export async function deleteEvent(id: string, path: string): Promise<void> {
     }
 }
 
-export async function addCommentToEvent(
-    eventId: string,
-    commentText: string,
-    userId: string,
-    path: string,
-
-
-) {
+export async function addCommentToEvent(eventId: string, commentText: string, userId: string, path: string,) {
     await connectToDatabase(); // Ensure you have a correct connection to MongoDB
 
     try {
@@ -216,3 +215,4 @@ export const fetchCommunityMembership = async (communityId: string, userId: stri
 
     return community.members.some((member: any) => member._id.toString() === userId);
 };
+

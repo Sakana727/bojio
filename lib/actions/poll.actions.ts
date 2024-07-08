@@ -1,4 +1,3 @@
-// actions/poll.actions.ts
 "use server";
 
 import { revalidatePath } from 'next/cache';
@@ -8,7 +7,6 @@ import mongoose from 'mongoose'; // Import Schema and Types
 
 import Event from '../models/event.model';
 import User from '../models/user.model';
-import { redirect } from 'next/navigation';
 
 interface CreatePollParams {
     question: string;

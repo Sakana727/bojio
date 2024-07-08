@@ -2,6 +2,8 @@ import { formatDateString } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import DeletePost from "../forms/DeletePost";
+import { LikeBtnSimple } from "../forms/like";
+import { ShareBtn } from "../forms/share";
 
 interface Props {
   id: string;
@@ -70,13 +72,14 @@ const PostCard = ({
             <p className=" mt-2 text-small-regular text-light-2">{content}</p>
             <div className={`${isComment && "mb-10"} mt-5 flex flex-col gap-3`}>
               <div className=" flex gap-3.5">
-                <Image
+                {/* <Image
                   src="/assets/heart-gray.svg"
                   alt="heart"
                   width={24}
                   height={24}
                   className=" cursor-pointer object-contain"
-                />
+                /> */}
+                <LikeBtnSimple />
                 <Link href={`/post/${id}`}>
                   <Image
                     src="/assets/reply.svg"
@@ -94,13 +97,14 @@ const PostCard = ({
                   height={24}
                   className=" cursor-pointer object-contain"
                 />
-                <Image
+                {/* <Image
                   src="/assets/share.svg"
                   alt="share"
                   width={24}
                   height={24}
                   className=" cursor-pointer object-contain"
-                />
+                /> */}
+                <ShareBtn title={content} text={content} url={id} />
               </div>
               {isComment && comments.length > 0 && (
                 <Link href={`/post/${id}`}>

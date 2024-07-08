@@ -1,6 +1,7 @@
 import { formatDateString } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
+import BojioButton from "../forms/Bojio";
 // import DeleteEvent from "../forms/DeleteEvent";
 
 interface Props {
@@ -147,15 +148,10 @@ const EventCard = ({
                 )}
 
                 {!isComment && (
-                  <Link href={`/event/${id}`}>
-                    <Image
-                      src="/assets/logo.svg"
-                      alt="poll"
-                      width={24}
-                      height={24}
-                      className="cursor-pointer object-contain"
-                    />
-                  </Link>
+                  // <Link href={`/event/${id}`}>
+                  //
+                  // </Link>
+                  <BojioButton eventId={id} userId={currentUserId} />
                 )}
               </div>
               {isComment && comments.length > 0 && (

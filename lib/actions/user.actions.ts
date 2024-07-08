@@ -61,7 +61,6 @@ export async function fetchUser(userId: string) {
   }
 }
 
-
 export async function fetchUserPosts(userId: string) {
   try {
     connectToDatabase()

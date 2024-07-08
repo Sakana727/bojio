@@ -13,7 +13,6 @@ const eventSchema = new mongoose.Schema({
     },
     location: {
         type: String,
-
     },
     image: {
         type: String,
@@ -44,6 +43,7 @@ const eventSchema = new mongoose.Schema({
             ref: 'Poll'
         },
     ],
+    participants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
 });
 
 const Event = mongoose.models.Event || mongoose.model("Event", eventSchema);

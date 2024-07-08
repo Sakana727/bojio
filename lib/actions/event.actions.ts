@@ -8,7 +8,6 @@ import Event from "../models/event.model";
 
 import { connectToDatabase } from "../mongoose";
 import mongoose from "mongoose";
-import Poll from "../models/poll.model";
 
 interface Params {
     title: string;
@@ -19,6 +18,14 @@ interface Params {
     author: string;
     communityId: string;
     path: string;
+}
+
+interface Participant {
+    id: string;
+    username: string;
+    name: string;
+    image: string;
+    bio: string;
 }
 
 export async function createEvent({ title, description, date, location, image, author, communityId, path }: Params) {
@@ -67,27 +74,6 @@ export async function createEvent({ title, description, date, location, image, a
     }
 }
 
-// export async function fetchEvents(pageNumber = 1, pageSize = 20) {
-//     await connectToDatabase();
-
-//     const skipAmount = (pageNumber - 1) * pageSize;
-
-//     const eventsQuery = Event.find()
-//         .sort({ createdAt: "desc" })
-//         .skip(skipAmount)
-//         .limit(pageSize)
-//         .populate({ path: "author", select: "_id name image" })
-//         .populate({ path: "community", select: "_id name image" });
-
-//     const totalEventsCount = await Event.countDocuments();
-
-//     const events = await eventsQuery.exec();
-
-//     const isNext = totalEventsCount > skipAmount + events.length;
-
-//     return { events, isNext };
-// }
-
 export async function fetchEventById(eventId: string) {
     await connectToDatabase(); // Ensure you have a correct connection to MongoDB
 
@@ -107,6 +93,12 @@ export async function fetchEventById(eventId: string) {
         })
         .populate('author', 'id name image') // Populate the main event author as well
         .populate({ path: 'community', select: "_id name image" })
+        // .populate({
+        //     path: 'participants',
+        //     model: 'User',
+        //     select: 'id name image', // Select the fields you need from the participants
+        // })
+        .populate('participants')
         .exec();
 
     return event;
@@ -216,3 +208,58 @@ export const fetchCommunityMembership = async (communityId: string, userId: stri
     return community.members.some((member: any) => member._id.toString() === userId);
 };
 
+export async function addParticipantToEvent(eventId: string, userId: string, path: string) {
+    try {
+        await connectToDatabase(); // Ensure database connection is established
+
+        const originalEvent = await Event.findById(eventId);
+        if (!originalEvent) {
+            throw new Error('Event not found');
+        }
+
+        const participant = await User.findOne({ id: userId });
+        if (!participant) {
+            throw new Error('User not found');
+        }
+
+        // Check if user is already a participant
+        if (originalEvent.participants.some((p: string) => p.toString() === participant._id.toString())) {
+            throw new Error('User is already a participant in this event');
+        }
+
+        // Add userId to participants array
+        originalEvent.participants.push(participant._id); // Ensure userId is correct
+
+        // Save the updated event
+        await originalEvent.save();
+
+        // Revalidate path if needed
+        revalidatePath(path);
+
+    } catch (error: any) {
+        console.error(`Failed to add participant to event: ${error.message}`);
+        throw new Error(`Failed to add participant to event: ${error.message}`);
+    }
+}
+
+export async function fetchParticipants(eventId: string): Promise<Participant[]> {
+    try {
+        await connectToDatabase(); // Ensure database connection is established
+
+        const event = await Event.findById(eventId).populate('participants');
+        if (!event) {
+            throw new Error('Event not found');
+        }
+
+        return event.participants.map((participant: typeof User & Participant) => ({
+            id: participant.id,
+            username: participant.username,
+            name: participant.name,
+            image: participant.image,
+            bio: participant.bio,
+        }));
+    } catch (error: any) {
+        console.error(`Failed to fetch participants: ${error.message}`);
+        throw new Error(`Failed to fetch participants: ${error.message}`);
+    }
+}

@@ -5,8 +5,6 @@ import Post from "../models/post.model";
 import User from "../models/user.model";
 
 import { connectToDatabase } from "../mongoose";
-import path from "path";
-import { model } from "mongoose";
 import Community from "../models/community.model";
 
 interface Params {
@@ -78,7 +76,6 @@ export async function fetchPosts(pageNumber = 1, pageSize = 20) {
 
   return { posts, isNext };
 }
-
 
 export async function fetchPostById(id: string) {
   connectToDatabase();
@@ -218,3 +215,4 @@ export async function addCommentToPost(
     throw new Error(`Error adding comment to post: ${error.message}`);
   }
 }
+

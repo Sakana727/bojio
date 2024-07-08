@@ -9,6 +9,7 @@ import { redirect } from "next/navigation";
 import Poll from "@/components/forms/Poll";
 import { getPollIdByEventId, hasUserVoted } from "@/lib/actions/poll.actions";
 import PollCard from "@/components/cards/PollCard";
+import BojioCard from "@/components/cards/BojioCard";
 
 const Page = async ({ params }: { params: { id: string } }) => {
   if (!params.id) return null;
@@ -46,13 +47,16 @@ const Page = async ({ params }: { params: { id: string } }) => {
         />
       </div>
       <div className="">
+        <BojioCard eventId={event._id} />
+      </div>
+      <div className="">
         {pollId ? (
           voted ? (
-            <div className="mt-7 text-white flex-row">
+            <div className="mt-2 text-white flex-row">
               <PollCard pollId={pollId} />
             </div>
           ) : (
-            <div className="mt-7 text-white flex-row">
+            <div className="mt-2 text-white flex-row">
               <Poll
                 eventId={event._id}
                 pollId={pollId}
@@ -71,6 +75,7 @@ const Page = async ({ params }: { params: { id: string } }) => {
           currentUserId={JSON.stringify(userInfo._id)}
         />
       </div>
+
       <div className="mt-10">
         {event.children.map((childItem: any) => (
           <EventCard

@@ -21,6 +21,7 @@ import { createEvent } from "@/lib/actions/event.actions";
 import { useOrganization } from "@clerk/nextjs";
 import { useUploadThing } from "@/lib/uploadthing";
 import { EventValidation } from "@/lib/validations/events";
+import { useToast } from "../ui/use-toast";
 
 interface Props {
   userId: string;
@@ -33,6 +34,8 @@ const EventForm = ({ userId, btnTitle }: Props) => {
   const router = useRouter();
   const pathname = usePathname();
   const { organization } = useOrganization();
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
 
   const form = useForm({
     resolver: zodResolver(EventValidation),
@@ -73,39 +76,55 @@ const EventForm = ({ userId, btnTitle }: Props) => {
 
   // Form submission handler
   const onSubmit = async (values: z.infer<typeof EventValidation>) => {
-    const blob = values.image;
-    const hasImageChanged =
-      typeof blob === "string" && blob.startsWith("data:image");
+    setIsLoading(true);
 
-    // If the image has changed, upload it
-    if (hasImageChanged) {
-      const imgRes = await startUpload(files);
-      if (imgRes && Array.isArray(imgRes) && imgRes.length > 0) {
-        const fileUrl = imgRes[0].url; // Adjust this based on your upload response structure
-        if (fileUrl) {
-          values.image = fileUrl;
+    try {
+      const blob = values.image;
+      const hasImageChanged =
+        typeof blob === "string" && blob.startsWith("data:image");
+
+      // If the image has changed, upload it
+      if (hasImageChanged) {
+        const imgRes = await startUpload(files);
+        if (imgRes && Array.isArray(imgRes) && imgRes.length > 0) {
+          const fileUrl = imgRes[0].url; // Adjust this based on your upload response structure
+          if (fileUrl) {
+            values.image = fileUrl;
+          }
         }
       }
+
+      // Prepare event data for submission
+      const eventData = {
+        title: values.title,
+        description: values.description,
+        date: values.date,
+        location: values.location,
+        image: values.image || "", // Ensure it defaults to an empty string if undefined
+        author: userId,
+        communityId: values.communityId || "", // Ensure it defaults to an empty string if undefined
+        parentId: undefined,
+        path: pathname,
+      };
+
+      // Call the createEvent action to create the event
+      await createEvent(eventData);
+      form.reset();
+      toast({
+        title: "Your Event has been posted successfully.",
+        description: "Please refresh the page",
+      });
+      // Redirect to home page after event creation
+      router.push("/");
+    } catch (error) {
+      console.error("Failed to create event:", error);
+      toast({
+        title: "Failed to create event",
+        description: "Please try again later",
+      });
+    } finally {
+      setIsLoading(false);
     }
-
-    // Prepare event data for submission
-    const eventData = {
-      title: values.title,
-      description: values.description,
-      date: values.date,
-      location: values.location,
-      image: values.image || "", // Ensure it defaults to an empty string if undefined
-      author: userId,
-      communityId: values.communityId || "", // Ensure it defaults to null if undefined
-      parentId: undefined,
-      path: pathname,
-    };
-
-    // Call the createEvent action to create the event
-    await createEvent(eventData);
-
-    // Redirect to home page after event creation
-    router.push("/");
   };
 
   return (
@@ -163,7 +182,7 @@ const EventForm = ({ userId, btnTitle }: Props) => {
           render={({ field }) => (
             <FormItem className="flex w-full flex-col gap-3 text-white">
               <FormLabel className="text-base-semibold text-light-2">
-                Date
+                Date (YYYY-MM-DDTHH:mm:ss)
               </FormLabel>
               <FormControl>
                 <Input
@@ -239,8 +258,12 @@ const EventForm = ({ userId, btnTitle }: Props) => {
         />
 
         {/* Submit button */}
-        <Button type="submit" className="bg-primary-500 text-white">
-          {btnTitle}
+        <Button
+          type="submit"
+          className="bg-primary-500 text-white"
+          disabled={isLoading}
+        >
+          {isLoading ? "Submitting..." : btnTitle}
         </Button>
       </form>
     </Form>

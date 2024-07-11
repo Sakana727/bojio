@@ -8,7 +8,7 @@ import { revalidatePath } from "next/cache";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-
+import { useToast } from "@/components/ui/use-toast";
 interface Props {
   eventId: string;
   userId: string;
@@ -18,6 +18,7 @@ const BojioButton = ({ eventId, userId }: Props) => {
   const router = useRouter();
   const pathname = usePathname();
   const [participants, setParticipants] = useState<any[]>([]);
+  const { toast } = useToast();
 
   useEffect(() => {
     const fetchEventData = async () => {
@@ -39,9 +40,17 @@ const BojioButton = ({ eventId, userId }: Props) => {
       await addParticipantToEvent(eventId, userId, pathname);
       const updatedParticipants = await fetchParticipants(eventId);
       setParticipants(updatedParticipants);
+      toast({
+        title: "Participant has been added successfully.",
+        description: "Please refresh the page",
+      });
     } catch (error) {
       console.error("Failed to add participant:", error);
     }
+    toast({
+      title: "Participant has already been added.",
+      description: "Please refresh the page",
+    });
   };
 
   return (

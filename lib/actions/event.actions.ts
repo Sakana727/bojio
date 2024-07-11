@@ -28,6 +28,18 @@ interface Participant {
     bio: string;
 }
 
+interface UpdateEventParams {
+    eventId: string;
+    title?: string;
+    description?: string;
+    date?: Date;
+    location?: string;
+    image?: string;
+    author?: string;
+    communityId?: string;
+    path?: string;
+}
+
 export async function createEvent({ title, description, date, location, image, author, communityId, path }: Params) {
     try {
         connectToDatabase();
@@ -161,6 +173,7 @@ export async function deleteEvent(id: string, path: string): Promise<void> {
 
         revalidatePath(path);
     } catch (error: any) {
+        console.error(`Failed to delete event: ${error.message}`);
         throw new Error(`Failed to delete event: ${error.message}`);
     }
 }
@@ -263,3 +276,36 @@ export async function fetchParticipants(eventId: string): Promise<Participant[]>
         throw new Error(`Failed to fetch participants: ${error.message}`);
     }
 }
+
+// export async function updateEvent({
+//     eventId,
+//     title,
+//     description,
+//     date,
+//     location,
+//     image,
+//     path,
+// }: UpdateEventParams) {
+//     try {
+//         connectToDatabase();
+
+//         const event = await Event.findById(eventId);
+//         if (!event) {
+//             throw new Error(`Event with id ${eventId} not found`);
+//         }
+
+//         if (title) event.title = title;
+//         if (description) event.description = description;
+//         if (date) event.date = date;
+//         if (location) event.location = location;
+//         if (image) event.image = image;
+
+//         await event.save();
+
+//         if (path) {
+//             // revalidatePath(path); // You can add revalidation logic if needed
+//         }
+//     } catch (error: any) {
+//         throw new Error(`Error updating event: ${error.message}`);
+//     }
+// }

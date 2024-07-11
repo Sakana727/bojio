@@ -6,7 +6,6 @@ import UserCard from "@/components/cards/UserCard";
 import PostsTab from "@/components/shared/PostsTab";
 import ProfileHeader from "@/components/shared/ProfileHeader";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
 import { fetchCommunityDetails } from "@/lib/actions/community.actions";
 import { currentUser } from "@clerk/nextjs/server";
 import EventsTab from "@/components/shared/EventsTab";

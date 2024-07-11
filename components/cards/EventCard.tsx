@@ -2,6 +2,7 @@ import { formatDateString } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import BojioButton from "../forms/Bojio";
+import DeleteEvent from "../forms/DeleteEvent";
 // import DeleteEvent from "../forms/DeleteEvent";
 
 interface Props {
@@ -164,13 +165,11 @@ const EventCard = ({
             </div>
           </div>
         </div>
-        {/* <DeleteEvent
-          eventId={JSON.stringify(id)}
+        <DeleteEvent
+          eventId={id}
           currentUserId={currentUserId}
           authorId={author.id}
-          parentId={parentId}
-          isComment={isComment}
-        /> */}
+        />
       </div>
       {!isComment && comments.length > 0 && (
         <div className="ml-1 mt-3 flex items-center gap-2">

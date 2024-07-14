@@ -28,17 +28,18 @@ interface Participant {
     bio: string;
 }
 
-interface UpdateEventParams {
+interface UpdateParams {
     eventId: string;
     title?: string;
     description?: string;
-    date?: Date;
+    date?: string;
     location?: string;
     image?: string;
     author?: string;
     communityId?: string;
-    path?: string;
+    path: string;
 }
+
 
 export async function createEvent({ title, description, date, location, image, author, communityId, path }: Params) {
     try {
@@ -309,3 +310,114 @@ export async function fetchParticipants(eventId: string): Promise<Participant[]>
 //         throw new Error(`Error updating event: ${error.message}`);
 //     }
 // }
+
+// export async function updateEvent({ eventId, title, description, date, location, image, author, communityId, path }: UpdateParams) {
+//     try {
+//         await connectToDatabase();
+
+//         const updateData: any = {};
+
+//         if (title) updateData.title = title;
+//         if (description) updateData.description = description;
+//         if (date) updateData.date = date;
+//         if (location) updateData.location = location;
+//         if (image) updateData.image = image;
+
+//         // Handle author update if provided
+//         if (author) {
+//             const authorIdObject = await User.findOne({ id: author }, { _id: 1 });
+//             if (!authorIdObject) {
+//                 throw new Error(`Author with id ${author} not found`);
+//             }
+//             updateData.author = authorIdObject._id;
+//         }
+
+//         // Handle community update if provided
+//         if (communityId) {
+//             const communityIdObject = await Community.findOne({ id: communityId }, { _id: 1 });
+//             if (!communityIdObject) {
+//                 throw new Error(`Community with id ${communityId} not found`);
+//             }
+//             updateData.community = communityIdObject._id;
+//         }
+
+//         const updatedEvent = await Event.findByIdAndUpdate(eventId, updateData, { new: true });
+
+//         if (!updatedEvent) {
+//             throw new Error(`Event with id ${eventId} not found`);
+//         }
+
+//         // Revalidate path if needed
+//         revalidatePath(path);
+
+//     } catch (error: any) {
+//         throw new Error(`Error updating event: ${error.message}`);
+//     }
+// }
+
+export async function updateEvent({
+    eventId,
+    title,
+    description,
+    date,
+    location,
+    image,
+    author,
+    communityId,
+    path,
+}: UpdateParams) {
+    try {
+        console.log("Connecting to the database...");
+        await connectToDatabase();
+
+        const updateData: any = {};
+
+        if (title) updateData.title = title;
+        if (description) updateData.description = description;
+        if (date) updateData.date = date;
+        if (location) updateData.location = location;
+        if (image) updateData.image = image;
+
+        console.log("Update data prepared:", updateData);
+
+        // Handle author update if provided
+        if (author) {
+            const authorIdObject = await User.findOne({ id: author }, { _id: 1 });
+            if (!authorIdObject) {
+                throw new Error(`Author with id ${author} not found`);
+            }
+            updateData.author = authorIdObject._id;
+        }
+
+        // Handle community update if provided
+        if (communityId) {
+            const communityIdObject = await Community.findOne(
+                { id: communityId },
+                { _id: 1 }
+            );
+            if (!communityIdObject) {
+                throw new Error(`Community with id ${communityId} not found`);
+            }
+            updateData.community = communityIdObject._id;
+        }
+
+        console.log("Final update data:", updateData);
+
+        const updatedEvent = await Event.findByIdAndUpdate(eventId, updateData, {
+            new: true,
+        });
+
+        if (!updatedEvent) {
+            throw new Error(`Event with id ${eventId} not found`);
+        }
+
+        console.log("Event updated successfully:", updatedEvent);
+
+        // Revalidate path if needed
+        revalidatePath(path);
+
+    } catch (error: any) {
+        console.error("Error updating event:", error);
+        throw new Error(`Error updating event: ${error.message}`);
+    }
+}

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+  <defs>
+    <style>
+      .cls-1 {
+        font-family: Arial-BoldMT, Arial;
+        font-size: 3px;
+        font-weight: 700;
+      }
+
+      .cls-1, .cls-2 {
+        fill: #efefef;
+      }
+
+      .cls-2 {
+        fill-rule: evenodd;
+        stroke-width: 0px;
+      }
+    </style>
+  </defs>
+  <g id="Layer_1" data-name="Layer 1">
+    <path class="cls-2" d="m11.61,2.88c-3.73,0-6.75,3.02-6.75,6.75s3.02,6.75,6.75,6.75,6.75-3.02,6.75-6.75-3.02-6.75-6.75-6.75Zm-7.91,6.75c0-4.37,3.54-7.91,7.91-7.91s7.91,3.54,7.91,7.91c0,1.98-.72,3.78-1.92,5.17l2.52,2.52c.23.23.23.59,0,.82s-.59.23-.82,0l-2.52-2.52c-1.39,1.2-3.19,1.92-5.17,1.92-4.37,0-7.91-3.54-7.91-7.91Z"/>
+  </g>
+  <g id="Layer_2" data-name="Layer 2">
+    <text class="cls-1" transform="translate(7 22.13)"><tspan x="0" y="0">Search</tspan></text>
+  </g>
+</svg>

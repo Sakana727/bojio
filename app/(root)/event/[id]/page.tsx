@@ -1,6 +1,5 @@
 // Page component where ResultCard and Poll are used
 import EventCard from "@/components/cards/EventCard";
-
 import EventComment from "@/components/forms/EventComment";
 import { fetchEventById } from "@/lib/actions/event.actions";
 import { fetchUser } from "@/lib/actions/user.actions";

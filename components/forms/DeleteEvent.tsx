@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { deleteEvent } from "@/lib/actions/event.actions";
@@ -16,18 +17,22 @@ function DeleteEvent({ eventId, currentUserId, authorId }: Props) {
 
   if (currentUserId !== authorId) return null;
 
+  const handleDelete = async () => {
+    await deleteEvent(eventId, pathname);
+    router.push("/communities");
+  };
+
   return (
-    <Image
-      src="/assets/delete.svg"
-      alt="delete"
-      width={18}
-      height={18}
-      className="cursor-pointer object-contain"
-      onClick={async () => {
-        await deleteEvent(eventId, pathname);
-        router.push("/communities");
-      }}
-    />
+    <Button onClick={handleDelete} variant="default">
+      <Image
+        src="/assets/delete.svg"
+        alt="delete"
+        width={18}
+        height={18}
+        className="cursor-pointer object-contain inline-block"
+      />
+      <span className="ml-2">Delete Event</span>
+    </Button>
   );
 }
 

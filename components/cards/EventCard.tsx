@@ -3,6 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 import BojioButton from "../forms/Bojio";
 import DeleteEvent from "../forms/DeleteEvent";
+import { EditEventDialog } from "../forms/EditEventDialog";
+import EventDropdown from "../shared/EventDropdown";
 // import DeleteEvent from "../forms/DeleteEvent";
 
 interface Props {
@@ -23,7 +25,7 @@ interface Props {
     id: string;
     name: string;
     image: string;
-  } | null;
+  };
   createdAt: string;
   comments: {
     author: {
@@ -165,11 +167,42 @@ const EventCard = ({
             </div>
           </div>
         </div>
-        <DeleteEvent
-          eventId={id}
-          currentUserId={currentUserId}
-          authorId={author.id}
-        />
+        {/* <div>
+          <DeleteEvent
+            eventId={id}
+            currentUserId={currentUserId}
+            authorId={author.id}
+          />
+        </div>
+        <div>
+          <EditEventDialog
+            eventId={id}
+            title={title}
+            description={description}
+            date={date}
+            location={location}
+            image={image}
+            author={author.id}
+            communityId={community.id}
+            path={""}
+            currentUserId={currentUserId}
+          />
+        </div> */}
+        <div>
+          {!isComment && (
+            <EventDropdown
+              id={id}
+              title={title}
+              description={description}
+              date={date}
+              location={location}
+              image={image}
+              authorId={author.id}
+              communityId={community.id}
+              currentUserId={currentUserId}
+            />
+          )}
+        </div>
       </div>
       {!isComment && comments.length > 0 && (
         <div className="ml-1 mt-3 flex items-center gap-2">

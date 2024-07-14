@@ -186,7 +186,7 @@ const EventForm = ({ userId, btnTitle }: Props) => {
               </FormLabel>
               <FormControl>
                 <Input
-                  type="text"
+                  type="datetime-local"
                   className="account-form_input no-focus"
                   {...field}
                 />

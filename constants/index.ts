@@ -32,6 +32,40 @@ export const sidebarLinks = [
   },
 ];
 
+export const SMsidebarLinks = [
+  {
+    imgURL: "/assets/homeSM.svg",
+    route: "/",
+    label: "Home",
+  },
+  {
+    imgURL: "/assets/communitySM.svg",
+    route: "/communities",
+    label: "Communities",
+  },
+  {
+    imgURL: "/assets/createSM.svg",
+    route: "/create-post",
+    label: "Create Post",
+  },
+  {
+    imgURL: "/assets/heartSM.svg",
+    route: "/activity",
+    label: "Activity",
+  },
+  {
+    imgURL: "/assets/userSM.svg",
+    route: "/profile",
+    label: "Profile",
+  },
+
+  {
+    imgURL: "/assets/searchSM.svg",
+    route: "/search",
+    label: "Search",
+  },
+];
+
 export const profileTabs = [
   { value: "posts", label: "Posts", icon: "/assets/reply.svg" },
   { value: "replies", label: "Replies", icon: "/assets/members.svg" },

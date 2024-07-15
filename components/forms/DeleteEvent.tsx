@@ -23,7 +23,11 @@ function DeleteEvent({ eventId, currentUserId, authorId }: Props) {
   };
 
   return (
-    <Button onClick={handleDelete} variant="default">
+    <Button
+      onClick={handleDelete}
+      variant="default"
+      className="hover:bg-white hover:text-black w-full"
+    >
       <Image
         src="/assets/delete.svg"
         alt="delete"

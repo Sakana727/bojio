@@ -25,7 +25,6 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body className={inter.className}>
-          <SpeedInsights />
           <Topbar />
           <main className="flex flex-row">
             <LeftSidebar />

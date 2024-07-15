@@ -1,15 +1,18 @@
 "use client";
-import Image from "next/image";
 import React from "react";
+import Image from "next/image";
 
 interface ShareBtnProps {
   title: string;
   text: string;
-  url: string;
+  postId: string;
 }
 
-export const ShareBtn = ({ title, text, url }: ShareBtnProps) => {
+export const ShareBtn: React.FC<ShareBtnProps> = ({ title, text, postId }) => {
   const handleShare = async () => {
+    const baseUrl = "http://localhost:3000/post/";
+    const url = `${baseUrl}${postId}`;
+
     if (navigator.share) {
       try {
         await navigator.share({
@@ -33,7 +36,7 @@ export const ShareBtn = ({ title, text, url }: ShareBtnProps) => {
         alt="share"
         width={24}
         height={24}
-        className=" cursor-pointer object-contain"
+        className="cursor-pointer object-contain"
       />
     </button>
   );

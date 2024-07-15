@@ -151,9 +151,6 @@ const EventCard = ({
                 )}
 
                 {!isComment && (
-                  // <Link href={`/event/${id}`}>
-                  //
-                  // </Link>
                   <BojioButton eventId={id} userId={currentUserId} />
                 )}
               </div>

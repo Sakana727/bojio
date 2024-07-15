@@ -125,7 +125,7 @@ export const EditEventDialog: React.FC<EditEventDialogProps> = ({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>
+        <Button className=" hover:bg-white hover:text-black w-full">
           <Image
             src="/assets/create.svg"
             alt="heart"

@@ -52,30 +52,23 @@ const EventDropdown: React.FC<EventDropdownProps> = ({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56">
-          <DropdownMenuItem className=" justify-center">
-            <DeleteEvent
-              eventId={id}
-              currentUserId={currentUserId}
-              authorId={authorId}
-            />
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onSelect={(e) => e.preventDefault()}
-            className=" justify-center"
-          >
-            <EditEventDialog
-              eventId={id}
-              title={title}
-              description={description}
-              date={date}
-              location={location}
-              image={image}
-              author={authorId}
-              communityId={communityId}
-              path={""} // You can set the path as needed
-              currentUserId={currentUserId}
-            />
-          </DropdownMenuItem>
+          <EditEventDialog
+            eventId={id}
+            title={title}
+            description={description}
+            date={date}
+            location={location}
+            image={image}
+            author={authorId}
+            communityId={communityId}
+            path={""} // You can set the path as needed
+            currentUserId={currentUserId}
+          />
+          <DeleteEvent
+            eventId={id}
+            currentUserId={currentUserId}
+            authorId={authorId}
+          />
         </DropdownMenuContent>
       </DropdownMenu>
     </Dialog>

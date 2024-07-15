@@ -97,14 +97,8 @@ const PostCard = ({
                   height={24}
                   className=" cursor-pointer object-contain"
                 /> */}
-                {/* <Image
-                  src="/assets/share.svg"
-                  alt="share"
-                  width={24}
-                  height={24}
-                  className=" cursor-pointer object-contain"
-                /> */}
-                <ShareBtn title={content} text={content} url={id} />
+
+                <ShareBtn title={content} text={content} postId={id} />
               </div>
               {isComment && comments.length > 0 && (
                 <Link href={`/post/${id}`}>

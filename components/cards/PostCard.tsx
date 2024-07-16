@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import DeletePost from "../forms/DeletePost";
 import { LikeBtnSimple } from "../forms/like";
-import { ShareBtn } from "../forms/share";
+import { ShareBtn } from "../forms/PostShare";
 
 interface Props {
   id: string;

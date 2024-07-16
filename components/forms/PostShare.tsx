@@ -10,7 +10,7 @@ interface ShareBtnProps {
 
 export const ShareBtn: React.FC<ShareBtnProps> = ({ title, text, postId }) => {
   const handleShare = async () => {
-    const baseUrl = "http://localhost:3000/post/";
+    const baseUrl = "https://bojio.vercel.app/post/";
     const url = `${baseUrl}${postId}`;
 
     if (navigator.share) {

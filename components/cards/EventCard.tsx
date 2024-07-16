@@ -5,6 +5,7 @@ import BojioButton from "../forms/Bojio";
 import DeleteEvent from "../forms/DeleteEvent";
 import { EditEventDialog } from "../forms/EditEventDialog";
 import EventDropdown from "../shared/EventDropdown";
+import { ShareBtn } from "../forms/EventShare";
 // import DeleteEvent from "../forms/DeleteEvent";
 
 interface Props {
@@ -131,13 +132,7 @@ const EventCard = ({
                     className="cursor-pointer object-contain"
                   />
                 </Link>
-                <Image
-                  src="/assets/share.svg"
-                  alt="share"
-                  width={24}
-                  height={24}
-                  className="cursor-pointer object-contain"
-                />
+                <ShareBtn title={title} text={description} EventId={id} />
                 {!isComment && (
                   <Link href={`/poll/${id}`}>
                     <Image

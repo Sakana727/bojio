@@ -190,7 +190,7 @@ const EventCard = ({
               location={location}
               image={image}
               authorId={author.id}
-              communityId={community.id}
+              communityId={community?.id}
               currentUserId={currentUserId}
             />
           )}

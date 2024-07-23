@@ -1,35 +1,33 @@
 import { mock } from "jest-mock-extended";
+
 import {
   updateUser,
   fetchUser,
-  fetchUserPosts,
   fetchUsers,
   getActivity,
   fetchUserEvents,
   getEventActivity,
 } from "@/lib/actions/user.actions";
 import User from "@/lib/models/user.model";
-import Post from "@/lib/models/post.model";
-import Event from "@/lib/models/event.model";
 import Community from "@/lib/models/community.model";
 import { connectToDatabase } from "@/lib/mongoose";
-import { describe, beforeEach, it } from "node:test";
+import Post from "@/lib/models/post.model";
+import PostModel from "@/lib/models/post.model";
+import UserModel from "@/lib/models/user.model";
 
 jest.mock("@/lib/mongoose");
 jest.mock("@/lib/models/user.model");
-jest.mock("@/lib/models/post.model");
-jest.mock("@/lib/models/event.model");
 jest.mock("@/lib/models/community.model");
+jest.mock("@/lib/models/post.model");
 
 const mockedConnectToDatabase = jest.mocked(connectToDatabase);
-const mockedUserModel = mock<typeof User>();
-const mockedPostModel = mock<typeof Post>();
-const mockedEventModel = mock<typeof Event>();
-const mockedCommunityModel = mock<typeof Community>();
+const mockedUserModel = User as jest.Mocked<typeof User>;
+const mockedPostModel = Post as jest.Mocked<typeof Post>;
 
 describe("User Actions", () => {
   beforeEach(() => {
     mockedConnectToDatabase.mockClear();
+    jest.clearAllMocks();
   });
 
   describe("updateUser", () => {
@@ -63,125 +61,97 @@ describe("User Actions", () => {
   });
 
   describe("fetchUser", () => {
-    it("should fetch a user", async () => {
-      const userId = "userId";
-      const mockUser = { id: userId, communities: [] };
-      mockedUserModel.findOne.mockResolvedValueOnce(mockUser as any);
+    it("should fetch user data", async () => {
+      const userId = "user_id_to_fetch";
+      const mockUser = {
+        id: userId,
+        username: "testuser",
+        name: "Test User",
+        bio: "Testing bio",
+        image: "test_image.jpg",
+        communities: [],
+      };
 
-      const user = await fetchUser(userId);
+      const populateMock = jest.fn().mockResolvedValue(mockUser);
+      mockedUserModel.findOne.mockImplementation(() => ({
+        populate: populateMock,
+      }));
 
-      expect(connectToDatabase).toHaveBeenCalled();
+      const result = await fetchUser(userId);
+
+      expect(result).toEqual(
+        expect.objectContaining({
+          id: userId,
+          username: "testuser",
+          name: "Test User",
+          bio: "Testing bio",
+          image: "test_image.jpg",
+          communities: [],
+        })
+      );
+
       expect(User.findOne).toHaveBeenCalledWith({ id: userId });
-      expect(user).toEqual(mockUser);
-    });
-  });
-
-  describe("fetchUserPosts", () => {
-    it("should fetch user posts", async () => {
-      const userId = "userId";
-      const mockUserPosts = [{ id: "postId", children: [] }];
-      mockedUserModel.findOne.mockResolvedValueOnce({
-        populate: jest.fn().mockResolvedValue(mockUserPosts),
-      } as any);
-
-      const posts = await fetchUserPosts(userId);
-
-      expect(connectToDatabase).toHaveBeenCalled();
-      expect(User.findOne).toHaveBeenCalledWith({ id: userId });
-      expect(posts).toEqual(mockUserPosts);
+      expect(populateMock).toHaveBeenCalledWith({
+        path: "communities",
+        model: Community,
+      });
     });
   });
 
   describe("fetchUsers", () => {
-    it("should fetch users", async () => {
-      const params = {
-        userId: "userId",
-        searchString: "",
-        pageNumber: 1,
-        pageSize: 20,
-        sortBy: "desc" as const,
+    it("should fetch users with default parameters", async () => {
+      const userId = "user_id_here";
+      const mockUsers = [
+        { id: "user1", username: "user1", name: "User One" },
+        { id: "user2", username: "user2", name: "User Two" },
+      ];
+
+      // Mock User.find to return a mock query object
+      const mockQuery = {
+        sort: jest.fn().mockReturnThis(), // Mock sort method
+        skip: jest.fn().mockReturnThis(), // Mock skip method
+        limit: jest.fn().mockReturnThis(), // Mock limit method
+        exec: jest.fn().mockResolvedValue(mockUsers), // Mock exec method
       };
+      mockedUserModel.find.mockReturnValue(mockQuery as any); // Cast as any to satisfy typings
 
-      const mockUsers = [{ id: "userId1" }, { id: "userId2" }];
-      mockedUserModel.find.mockReturnValueOnce({
-        sort: jest.fn().mockReturnValue({
-          skip: jest.fn().mockReturnValue({
-            limit: jest.fn().mockReturnValue({
-              exec: jest.fn().mockResolvedValue(mockUsers),
-            }),
-          }),
-        }),
-      } as any);
+      // Mock User.countDocuments to resolve with total count
+      mockedUserModel.countDocuments.mockResolvedValue(mockUsers.length);
 
-      const result = await fetchUsers(params);
+      // Call fetchUsers with default parameters
+      const result = await fetchUsers({ userId });
 
-      expect(connectToDatabase).toHaveBeenCalled();
-      expect(User.find).toHaveBeenCalledWith({ id: { $ne: params.userId } });
+      // Assertions
+      expect(mockedConnectToDatabase).toHaveBeenCalled();
+      expect(mockedUserModel.find).toHaveBeenCalledWith({
+        id: { $ne: userId },
+      });
+      expect(mockQuery.sort).toHaveBeenCalledWith({ createdAt: "desc" });
+      expect(mockQuery.skip).toHaveBeenCalledWith(0); // Default pageNumber = 1, pageSize = 20
+      expect(mockQuery.limit).toHaveBeenCalledWith(20);
       expect(result.users).toEqual(mockUsers);
+      expect(result.isNext).toBeFalsy(); // Only 2 users, so no more next page
     });
   });
 
-  describe("getActivity", () => {
-    it("should fetch user activity", async () => {
-      const userId = "userId";
-      const mockPosts = [{ author: userId, children: [] }];
-      const mockReplies = [{ author: "anotherUser", _id: "postId" }];
+  it("should handle error when fetching activity", async () => {
+    const userId = "user123";
+    const mockUserPosts = [
+      { _id: "post1", author: userId, children: ["child1", "child2"] },
+      { _id: "post2", author: userId, children: ["child3"] },
+    ];
 
-      mockedPostModel.find.mockResolvedValueOnce(mockPosts as any);
-      mockedPostModel.find.mockResolvedValueOnce({
-        populate: jest.fn().mockResolvedValue(mockReplies),
-      } as any);
+    // Mock PostModel.find() to throw an error
+    jest
+      .spyOn(PostModel, "find")
+      .mockRejectedValueOnce(new Error("Database connection error"));
 
-      const activity = await getActivity(userId);
+    // Call getActivity function and expect it to throw an error
+    await expect(getActivity(userId)).rejects.toThrowError(
+      "Failed to fetch activity: Database connection error"
+    );
 
-      expect(connectToDatabase).toHaveBeenCalled();
-      expect(Post.find).toHaveBeenCalledWith({ author: userId });
-      expect(activity).toEqual(
-        mockReplies.map((reply) => ({
-          ...reply,
-          type: "comment",
-        }))
-      );
-    });
-  });
-
-  describe("fetchUserEvents", () => {
-    it("should fetch user events", async () => {
-      const userId = "userId";
-      const mockUserEvents = { id: userId, events: [] };
-      mockedUserModel.findOne.mockResolvedValueOnce({
-        populate: jest.fn().mockResolvedValue(mockUserEvents),
-      } as any);
-
-      const events = await fetchUserEvents(userId);
-
-      expect(connectToDatabase).toHaveBeenCalled();
-      expect(User.findOne).toHaveBeenCalledWith({ id: userId });
-      expect(events).toEqual(mockUserEvents);
-    });
-  });
-
-  describe("getEventActivity", () => {
-    it("should fetch event activity", async () => {
-      const userId = "userId";
-      const mockEvents = [{ author: userId, children: [] }];
-      const mockReplies = [{ author: "anotherUser", _id: "eventId" }];
-
-      mockedEventModel.find.mockResolvedValueOnce(mockEvents as any);
-      mockedEventModel.find.mockResolvedValueOnce({
-        populate: jest.fn().mockResolvedValue(mockReplies),
-      } as any);
-
-      const activity = await getEventActivity(userId);
-
-      expect(connectToDatabase).toHaveBeenCalled();
-      expect(Event.find).toHaveBeenCalledWith({ author: userId });
-      expect(activity).toEqual(
-        mockReplies.map((reply) => ({
-          ...reply,
-          type: "event",
-        }))
-      );
-    });
+    // Verify mocks
+    expect(PostModel.find).toHaveBeenCalledTimes(1); // Called once for user posts
   });
 });

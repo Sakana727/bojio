@@ -6,6 +6,7 @@ import DeleteEvent from "../forms/DeleteEvent";
 import { EditEventDialog } from "../forms/EditEventDialog";
 import EventDropdown from "../shared/EventDropdown";
 import { ShareBtn } from "../forms/EventShare";
+import { LikeBtnSimple } from "../forms/like";
 // import DeleteEvent from "../forms/DeleteEvent";
 
 interface Props {
@@ -116,13 +117,7 @@ const EventCard = ({
 
             <div className={`${isComment && "mb-10"} mt-5 flex flex-col gap-3`}>
               <div className="flex gap-3.5">
-                <Image
-                  src="/assets/heart-gray.svg"
-                  alt="heart"
-                  width={24}
-                  height={24}
-                  className="cursor-pointer object-contain"
-                />
+                <LikeBtnSimple />
                 <Link href={`/event/${id}`}>
                   <Image
                     src="/assets/reply.svg"
@@ -133,7 +128,7 @@ const EventCard = ({
                   />
                 </Link>
                 <ShareBtn title={title} text={description} EventId={id} />
-                {!isComment && (
+                {!isComment && !parentId && (
                   <Link href={`/poll/${id}`}>
                     <Image
                       src="/assets/poll.svg"
@@ -145,7 +140,7 @@ const EventCard = ({
                   </Link>
                 )}
 
-                {!isComment && (
+                {!isComment && !parentId && (
                   <BojioButton eventId={id} userId={currentUserId} />
                 )}
               </div>

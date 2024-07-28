@@ -52,6 +52,7 @@ export const EditEventDialog: React.FC<EditEventDialogProps> = ({
   const { startUpload } = useUploadThing("media"); // Upload hook
   const router = useRouter();
   const pathname = usePathname();
+  if (currentUserId !== author) return null;
 
   // Handle image selection and preview
   const handleImageChange = (

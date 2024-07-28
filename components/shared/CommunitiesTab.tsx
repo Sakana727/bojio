@@ -4,7 +4,7 @@ import { currentUser } from "@clerk/nextjs/server";
 import CommunityCard from "@/components/cards/CommunityCard";
 import Pagination from "@/components/shared/Pagination";
 
-async function CommunitiesTab() {
+async function CommunitiesTab({ userInfo }: { userInfo: any }) {
   const user = await currentUser();
   if (!user) return null;
 
@@ -24,7 +24,7 @@ async function CommunitiesTab() {
         ) : (
           result.communities
             .filter((community) =>
-              community.members.some((member: any) => member.id === user.id)
+              community.members.some((member: any) => member.id === userInfo.id)
             )
             .map((community) => (
               <CommunityCard

@@ -65,7 +65,9 @@ async function Page({ params }: { params: { id: string } }) {
               )}
 
               {tab.value === "replies" && <RepliesTab />}
-              {tab.value === "communitites" && <CommunitiesTab />}
+              {tab.value === "communitites" && (
+                <CommunitiesTab userInfo={userInfo} />
+              )}
             </TabsContent>
           ))}
         </Tabs>

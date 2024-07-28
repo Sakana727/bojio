@@ -69,7 +69,7 @@ export const SMsidebarLinks = [
 export const profileTabs = [
   { value: "posts", label: "Posts", icon: "/assets/reply.svg" },
   { value: "replies", label: "Replies", icon: "/assets/members.svg" },
-  { value: "communitites", label: "Communitites", icon: "/assets/tag.svg" },
+  { value: "communitites", label: "Communities", icon: "/assets/tag.svg" },
 ];
 
 export const communityTabs = [

@@ -37,6 +37,7 @@ const EventDropdown: React.FC<EventDropdownProps> = ({
   communityId,
   currentUserId,
 }) => {
+  if (currentUserId !== authorId) return null;
   return (
     <Dialog>
       <DropdownMenu>
